@@ -22,6 +22,10 @@ pub fn fixed_xor(buf1: &[u8], buf2: &[u8]) -> Result<Vec<u8>, FixedXorError> {
     Ok(data)
 }
 
+pub fn repeating_key(key: &[u8], length: usize) -> Vec<u8> {
+    key.iter().cycle().take(length).cloned().collect()
+}
+
 #[derive(Debug)]
 pub struct CrackResult {
     pub plaintext: Vec<u8>,
@@ -31,7 +35,7 @@ pub struct CrackResult {
 
 pub fn crack_single_byte_xor(bytes: &[u8]) -> CrackResult {
     (0..128u8)
-        .map(|byte| std::iter::repeat(byte).take(bytes.len()).collect::<Vec<_>>())
+        .map(|byte| repeating_key(&[byte], bytes.len()))
         .map(|key| {
             let plaintext = fixed_xor(bytes, &key).unwrap();
             let score = english::score(&plaintext);
@@ -43,4 +47,14 @@ pub fn crack_single_byte_xor(bytes: &[u8]) -> CrackResult {
         })
         .max_by_key(|result| result.score)
         .unwrap()
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn repeating_key_works() {
+        assert_eq!(repeating_key(b"ICE", 6), b"ICEICE");
+    }
 }
