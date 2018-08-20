@@ -1,5 +1,6 @@
 pub mod encoding;
 pub mod english;
+mod score;
 
 #[derive(Debug)]
 pub enum FixedXorError {
