@@ -32,7 +32,7 @@ pub fn crack_single_byte_xor(bytes: &[u8]) -> CrackResult {
     let mut best = CrackResult {
         plaintext: Vec::from(bytes),
         key: vec![0x00],
-        score: english::score(&bytes),
+        score: english::score(&bytes).val(),
     };
 
     for key in std::u8::MIN..std::u8::MAX {
@@ -41,7 +41,7 @@ pub fn crack_single_byte_xor(bytes: &[u8]) -> CrackResult {
             .collect::<Vec<u8>>();
 
         let plaintext = fixed_xor(bytes, &full_key).unwrap();
-        let score = english::score(&plaintext);
+        let score = english::score(&plaintext).val();
 
         if score > best.score {
             best = CrackResult {

@@ -1,3 +1,5 @@
+use score::Score;
+
 const ETAOIN: &'static [u8] = b"ETAOIN SHRDLU";
 
 fn etaoin_count(bytes: &[u8]) -> u32 {
@@ -9,8 +11,8 @@ fn etaoin_count(bytes: &[u8]) -> u32 {
     })
 }
 
-pub fn score(bytes: &[u8]) -> f64 {
-    etaoin_count(bytes) as f64 / bytes.len() as f64
+pub fn score(bytes: &[u8]) -> Score {
+    Score::new(etaoin_count(bytes) as f64 / bytes.len() as f64).unwrap()
 }
 
 #[cfg(test)]
@@ -26,8 +28,8 @@ mod test {
 
     #[test]
     fn score_works() {
-        assert_eq!(score(b"test"), 1.0);
-        assert_eq!(score(b"tezz"), 0.5);
-        assert_eq!(score(&[0x00]), 0.0);
+        assert_eq!(score(b"test").val(), 1.0);
+        assert_eq!(score(b"tezz").val(), 0.5);
+        assert_eq!(score(&[0x00]).val(), 0.0);
     }
 }
