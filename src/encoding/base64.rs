@@ -1,11 +1,6 @@
-pub fn encode(data: &[u8]) -> String {
-    let alphabet = [
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-        'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-        'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1',
-        '2', '3', '4', '5', '6', '7', '8', '9', '+', '/',
-    ];
+const ALPHABET: &'static [u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+pub fn encode(data: &[u8]) -> String {
     let mut base64_string = String::new();
 
     for chunks in data.chunks(3) {
@@ -33,7 +28,7 @@ pub fn encode(data: &[u8]) -> String {
 
         for n in 0..chunks.len() + 1 {
             let idx = buf[n as usize] as usize;
-            base64_string.push(alphabet[idx]);
+            base64_string.push(char::from(ALPHABET[idx]));
         }
 
         for _ in 0..3 - chunks.len() {
