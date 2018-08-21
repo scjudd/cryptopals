@@ -4,11 +4,11 @@ use std::cmp::Ordering;
 pub struct Score(f64);
 
 impl Score {
-    pub fn new(val: f64) -> Score {
+    pub fn new(val: f64) -> Option<Score> {
         if val.is_nan() {
-            Score(0.0)
+            None
         } else {
-            Score(val)
+            Some(Score(val))
         }
     }
 

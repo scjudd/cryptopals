@@ -12,7 +12,12 @@ fn etaoin_count(bytes: &[u8]) -> u32 {
 }
 
 pub fn score(bytes: &[u8]) -> Score {
-    Score::new(etaoin_count(bytes) as f64 / bytes.len() as f64)
+    let val = match bytes.len() {
+        0 => 0.0,
+        n => etaoin_count(bytes) as f64 / n as f64,
+    };
+
+    Score::new(val).unwrap()
 }
 
 #[cfg(test)]
