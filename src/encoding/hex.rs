@@ -6,7 +6,7 @@ pub fn decode(hex: &str) -> Result<Vec<u8>, DecodeError> {
     if hex.len() % 2 != 0 {
         return Err(DecodeError {
             offset: 0,
-            kind: OddLen,
+            kind: InvalidLength,
         });
     }
 
