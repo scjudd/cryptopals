@@ -11,16 +11,16 @@ pub fn encode(data: &[u8]) -> String {
         for (n, chunk) in chunks.into_iter().enumerate() {
             match n {
                 0 => {
-                    buf[0] = chunk >> 2u8;
-                    buf[1] = (chunk & 0x3) << 4u8;
+                    buf[0] |= chunk >> 2u8;
+                    buf[1] |= (chunk & 0x3) << 4u8;
                 }
                 1 => {
                     buf[1] |= chunk >> 4u8;
-                    buf[2] = (chunk & 0xf) << 2u8;
+                    buf[2] |= (chunk & 0xf) << 2u8;
                 }
                 2 => {
                     buf[2] |= chunk >> 6u8;
-                    buf[3] = chunk & 0x3f;
+                    buf[3] |= chunk & 0x3f;
                 }
                 _ => panic!("shouldn't have more than 3 chunks"),
             }
