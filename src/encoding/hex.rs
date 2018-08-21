@@ -39,19 +39,34 @@ mod test {
 
     #[test]
     fn decode_works() {
-        assert!(decode("49").is_ok());
+        let data = decode("49").unwrap();
+        assert_eq!(data, &[0x49]);
     }
 
     #[test]
-    fn decode_fails_with_odd_length() {
-        assert!(decode("9").is_err());
-        assert!(decode("999").is_err());
+    fn decode_fails_with_invalid_length() {
+        let err = decode("999").err().unwrap();
+        assert_eq!(err.kind, InvalidLength);
     }
 
     #[test]
-    fn decode_fails_with_invalid_hex() {
-        assert!(decode("-1").is_err());
-        assert!(decode("+1").is_err());
-        assert!(decode("zz").is_err());
+    fn decode_fails_with_illegal_char() {
+        {
+            let err = decode("-1").err().unwrap();
+            assert_eq!(err.offset, 0);
+            assert_eq!(err.kind, IllegalChar('-'));
+        }
+
+        {
+            let err = decode("+1").err().unwrap();
+            assert_eq!(err.offset, 0);
+            assert_eq!(err.kind, IllegalChar('+'));
+        }
+
+        {
+            let err = decode("fz").err().unwrap();
+            assert_eq!(err.offset, 1);
+            assert_eq!(err.kind, IllegalChar('z'));
+        }
     }
 }

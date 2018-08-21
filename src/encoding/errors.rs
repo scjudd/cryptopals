@@ -4,7 +4,7 @@ pub struct DecodeError {
     pub kind: DecodeErrorKind,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum DecodeErrorKind {
     IllegalChar(char),
     InvalidLength,

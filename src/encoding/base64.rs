@@ -45,6 +45,7 @@ mod test {
 
     #[test]
     fn encode_works() {
-        assert_eq!(encode(&[0xb0, 0x1d, 0xfa, 0xce]), "sB36zg==");
+        let base64 = encode(&[0xb0, 0x1d, 0xfa, 0xce]);
+        assert_eq!(base64, "sB36zg==");
     }
 }
