@@ -1,7 +1,7 @@
 const ALPHABET: &'static [u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 pub fn encode(data: &[u8]) -> String {
-    let mut base64_string = String::new();
+    let mut base64 = String::new();
 
     for bytes in data.chunks(3) {
         let mut chunk = [0; 4];
@@ -28,15 +28,15 @@ pub fn encode(data: &[u8]) -> String {
 
         for n in 0..bytes.len() + 1 {
             let idx = chunk[n as usize] as usize;
-            base64_string.push(char::from(ALPHABET[idx]));
+            base64.push(char::from(ALPHABET[idx]));
         }
 
         for _ in 0..3 - bytes.len() {
-            base64_string.push('=');
+            base64.push('=');
         }
     }
 
-    base64_string
+    base64
 }
 
 #[cfg(test)]
