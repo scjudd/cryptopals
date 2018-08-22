@@ -43,12 +43,33 @@ pub fn encode(data: &[u8]) -> String {
 }
 
 pub fn decode(base64: &str) -> Result<Vec<u8>, DecodeError> {
+    let unpadded_length = base64.chars().filter(|&ch| ch != '=').count();
+
+    if unpadded_length % 4 == 1 {
+        return Err(DecodeError {
+            offset: 0,
+            kind: InvalidLength,
+        });
+    }
+
     let mut buf = Vec::new();
     let mut padding = false;
+    let mut num_padding = 0;
+    let needed_padding = match unpadded_length % 4 {
+        0 => 0,
+        n => 4 - n,
+    };
 
     for (offset, ch) in base64.chars().enumerate() {
         if ch == '=' {
             padding = true;
+            num_padding += 1;
+            if num_padding > needed_padding {
+                return Err(DecodeError {
+                    offset: offset,
+                    kind: IllegalChar(ch),
+                });
+            }
             continue;
         }
 
@@ -128,6 +149,12 @@ mod test {
     }
 
     #[test]
+    fn decode_fails_with_invalid_length() {
+        let err = decode("f===").err().unwrap();
+        assert_eq!(err.kind, InvalidLength);
+    }
+
+    #[test]
     fn decode_fails_with_illegal_char() {
         {
             let err = decode("foobarb_").err().unwrap();
@@ -136,9 +163,24 @@ mod test {
         }
 
         {
+            // Data following padding
             let err = decode("fo=o").err().unwrap();
             assert_eq!(err.offset, 3);
             assert_eq!(err.kind, IllegalChar('o'));
+        }
+
+        {
+            // No padding is needed for this string
+            let err = decode("fo==o=o=").err().unwrap();
+            assert_eq!(err.offset, 2);
+            assert_eq!(err.kind, IllegalChar('='));
+        }
+
+        {
+            // One too many padding characters
+            let err = decode("fo===").err().unwrap();
+            assert_eq!(err.offset, 4);
+            assert_eq!(err.kind, IllegalChar('='));
         }
     }
 }
