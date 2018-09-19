@@ -29,12 +29,14 @@ pub fn encode(data: &[u8]) -> String {
             }
         }
 
-        for n in 0..bytes.len() + 1 {
+        let chunk_length = bytes.len() + 1;
+
+        for n in 0..chunk_length {
             let idx = chunk[n as usize] as usize;
             base64.push(char::from(ALPHABET[idx]));
         }
 
-        for _ in 0..3 - bytes.len() {
+        for _ in 0..4 - chunk_length {
             base64.push('=');
         }
     }
@@ -117,7 +119,9 @@ pub fn decode(base64: &str) -> Result<Vec<u8>, DecodeError> {
             }
         }
 
-        for n in 0..bytes.len() - 1 {
+        let chunk_length = bytes.len() - 1;
+
+        for n in 0..chunk_length {
             data.push(chunk[n as usize]);
         }
     }
